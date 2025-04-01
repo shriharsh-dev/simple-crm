@@ -1,0 +1,49 @@
+{% extends 'crm/base.html' %}
+
+{% block title %}Dashboard | Simple CRM{% endblock %}
+
+{% block content %}
+<h2>Dashboard</h2>
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Customers</h5>
+                <p class="card-text display-4">{{ total_customers }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Active Customers</h5>
+                <p class="card-text display-4">{{ active_customers }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Leads</h5>
+                <p class="card-text display-4">{{ leads }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="mt-5">Recent Interactions</h3>
+<div class="list-group mt-3">
+    {% for interaction in recent_interactions %}
+    <a href="{% url 'customer-detail' interaction.customer.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ interaction.subject }}</h5>
+            <small>{{ interaction.date|date:"M d, Y" }}</small>
+        </div>
+        <p class="mb-1">{{ interaction.notes|truncatechars:100 }}</p>
+        <small>{{ interaction.get_interaction_type_display }} with {{ interaction.customer }}</small>
+    </a>
+    {% empty %}
+    <p>No recent interactions.</p>
+    {% endfor %}
+</div>
+{% endblock %}

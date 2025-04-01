@@ -50,3 +50,7 @@ class InteractionForm(forms.ModelForm):
             'date',
             Submit('submit', 'Save Interaction', css_class='btn btn-primary mt-3')
         )
+
+for form in [CustomerForm, InteractionForm]:
+    for field_name, field in form.base_fields.items():
+        field.widget.attrs['class'] = 'form-control'

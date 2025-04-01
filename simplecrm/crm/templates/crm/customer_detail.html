@@ -1,0 +1,13 @@
+{% extends 'crm/base.html' %}
+
+<div class="collapse" id="newInteractionForm">
+    {% block content %}
+    <div class="card-body">
+        {% load crispy_forms_tags %}
+        <form method="post" action="{% url 'add-interaction' customer.id %}">
+            {% csrf_token %}
+            {% crispy interaction_form %}
+        </form>
+    </div>
+    {% endblock %}
+</div>

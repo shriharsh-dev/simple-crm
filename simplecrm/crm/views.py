@@ -22,6 +22,11 @@ class CustomerCreateView(generic.CreateView):
     template_name = 'crm/customer_form.html'
     success_url = reverse_lazy('customer-list')
 
+class CustomerListView(generic.ListView):
+    model = Customer
+    template_name = 'crm/customer_list.html'
+    context_object_name = 'customers'
+
 class CustomerUpdateView(generic.UpdateView):
     model = Customer
     form_class = CustomerForm
@@ -47,3 +52,34 @@ class CustomerDeleteView(generic.DeleteView):
                 return redirect('customer-detail', pk=customer.pk)
             
         return redirect('customer-detail',pk=customer.pk)
+
+class CustomerDetailView(generic.DetailView):
+    model = Customer
+    template_name = 'crm/customer_detail.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get all interactions for this customer, ordered by most recent first
+        context['interactions'] = self.object.interactions.order_by('-date')
+        # Create an empty interaction form with the current customer pre-selected
+        context['interaction_form'] = InteractionForm(initial={'customer': self.object})
+        return context
+
+def add_interaction(request, pk):
+    # Get the customer or return 404 if not found
+    customer = get_object_or_404(Customer, pk=pk)
+    
+    if request.method == 'POST':
+        form = InteractionForm(request.POST)
+        if form.is_valid():
+            # Create interaction but don't save to database yet
+            interaction = form.save(commit=False)
+            # Set the customer for this interaction
+            interaction.customer = customer
+            # Now save to database
+            interaction.save()
+            # Redirect back to customer detail page
+            return redirect('customer-detail', pk=customer.pk)
+    
+    # If form not valid or not a POST request, just redirect back to customer detail
+    return redirect('customer-detail', pk=customer.pk)
