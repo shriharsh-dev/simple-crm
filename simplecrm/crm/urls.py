@@ -1,8 +1,12 @@
 from django.urls import path
 from . import views
+from .views import login_view, register_view, logout_view
 
 urlpatterns = [
-    path('', views.DashboardView.as_view(), name='dashboard'),
+    path('', login_view, name='login'),
+    path("register/", register_view, name='register'),
+    path('logout/', logout_view, name='logout'),
+    path('dashboard/', views.DashboardView.as_view(), name='dashboard'),
     path('customers/', views.CustomerListView.as_view(), name='customer-list'),
     path('customers/add/', views.CustomerCreateView.as_view(), name='customer-create'),
     path('customers/<int:pk>/', views.CustomerDetailView.as_view(), name='customer-detail'),
